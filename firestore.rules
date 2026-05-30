@@ -1,0 +1,36 @@
+rules_version = '2';
+
+// Trackr security rules: a user may only read/write their own data.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // users/{uid}: a user can only access their own user document.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // habits: owner-only access via the userId field.
+    match /habits/{habitId} {
+      allow read, delete: if isOwner(resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow update: if isOwner(resource.data.userId)
+                    && isOwner(request.resource.data.userId);
+    }
+
+    // habitLogs: owner-only access via the userId field.
+    match /habitLogs/{logId} {
+      allow read, delete: if isOwner(resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow update: if isOwner(resource.data.userId)
+                    && isOwner(request.resource.data.userId);
+    }
+  }
+}
