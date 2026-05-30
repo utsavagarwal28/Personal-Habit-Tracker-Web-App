@@ -1,9 +1,10 @@
 import { signOut } from "../firebase/auth";
 import { useAuth } from "../context/AuthContext";
+import { HabitList } from "../components/habits/HabitList";
 
 /**
- * Phase 1 placeholder dashboard. Habit list, streak summary, and calendar
- * are implemented in later phases.
+ * Dashboard. Habit management lands in Phase 2; streak summary and calendar
+ * arrive in later phases.
  */
 export function DashboardPage() {
   const { user } = useAuth();
@@ -21,13 +22,12 @@ export function DashboardPage() {
         </button>
       </header>
 
+      <p className="mt-2 text-sm text-gray-400">
+        Signed in as {user?.displayName || user?.email}.
+      </p>
+
       <main className="mt-8">
-        <p className="text-gray-600 dark:text-gray-300">
-          Signed in as {user?.displayName || user?.email}.
-        </p>
-        <p className="mt-2 text-sm text-gray-400">
-          Habits, streaks, and calendar arrive in the next phases.
-        </p>
+        <HabitList />
       </main>
     </div>
   );
